@@ -1,0 +1,41 @@
+[package]
+name    = "titrate"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "titrate-client"
+path = "src/bin/client.rs"
+
+[[bin]]
+name = "titrate-server"
+path = "src/bin/server.rs"
+
+[dependencies]
+axum             = "*"
+bytes            = "*"
+futures          = "*"
+http             = "*"
+http-body-util   = "*"
+pin-project      = "*"
+tap              = "*"
+tracing          = "*"
+
+[dependencies.hyper]
+version          = "*"
+default-features = false
+features         = ["client", "http1", "server"]
+
+[dependencies.hyper-util]
+version          = "*"
+default-features = false
+features         = ["tokio"]
+
+[dependencies.tokio]
+version          = "*"
+default-features = false
+features         = ["macros", "rt", "rt-multi-thread"]
+
+[dependencies.tracing-subscriber]
+version  = "*"
+features = ["env-filter"]

@@ -1,0 +1,332 @@
+# a namespace for the load-test.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: titrate
+---
+# server's service account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: server
+  namespace: titrate
+---
+# server: pods serving response bodies with a 16-byte chunk size.
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-16
+  namespace: titrate
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-server
+    frame-size: 16
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-16
+  namespace: titrate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: titrate-server
+      body-size: 16kb
+      frame-size: 16
+  template:
+    metadata:
+      labels:
+        app: titrate-server
+        body-size: 16kb
+        frame-size: 16
+    spec:
+      serviceAccountName: server
+      containers:
+      - name: server
+        image: titrate-server:latest
+        imagePullPolicy: Never
+        env:
+        - name: TITRATE_PORT
+          value: 80
+        - name: TITRATE_BODY_SIZE
+          value: 16384 # 16kb response body
+        - name: TITRATE_FRAME_SIZE
+          value: 16 # 16-byte frames
+        # limit the pod to a 32Mib footprint.
+        resources:
+          requests:
+            memory: "8Mi"
+          limits:
+            memory: "32Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+        ports:
+        - containerPort: 80
+          name: http
+---
+# server: pods serving response bodies with a 64-byte chunk size.
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-64
+  namespace: titrate
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-server
+    frame-size: 64
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-64
+  namespace: titrate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: titrate-server
+      body-size: 16kb
+      frame-size: 64
+  template:
+    metadata:
+      labels:
+        app: titrate-server
+        body-size: 16kb
+        frame-size: 64
+    spec:
+      serviceAccountName: server
+      containers:
+      - name: server
+        image: titrate-server:latest
+        imagePullPolicy: Never
+        env:
+        - name: TITRATE_PORT
+          value: 80
+        - name: TITRATE_BODY_SIZE
+          value: 16384 # 16kb response body
+        - name: TITRATE_FRAME_SIZE
+          value: 64 # 64-byte frames
+        # limit the pod to a 32Mib footprint.
+        resources:
+          requests:
+            memory: "8Mi"
+          limits:
+            memory: "32Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+        ports:
+        - containerPort: 80
+          name: http
+---
+# server: pods serving response bodies with a 256-byte chunk size.
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-256
+  namespace: titrate
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-server
+    frame-size: 256
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-256
+  namespace: titrate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: titrate-server
+      body-size: 16kb
+      frame-size: 256
+  template:
+    metadata:
+      labels:
+        app: titrate-server
+        body-size: 16kb
+        frame-size: 256
+    spec:
+      serviceAccountName: server
+      containers:
+      - name: server
+        image: titrate-server:latest
+        imagePullPolicy: Never
+        env:
+        - name: TITRATE_PORT
+          value: 80
+        - name: TITRATE_BODY_SIZE
+          value: 16384 # 16kb response body
+        - name: TITRATE_FRAME_SIZE
+          value: 256 # 256-byte frames
+        # limit the pod to a 32Mib footprint.
+        resources:
+          requests:
+            memory: "8Mi"
+          limits:
+            memory: "32Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+        ports:
+        - containerPort: 80
+          name: http
+---
+# server: pods serving response bodies with a 1024-byte chunk size.
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-1024
+  namespace: titrate
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-server
+    frame-size: 1024
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-1024
+  namespace: titrate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: titrate-server
+      body-size: 16kb
+      frame-size: 1024
+  template:
+    metadata:
+      labels:
+        app: titrate-server
+        body-size: 16kb
+        frame-size: 1024
+    spec:
+      serviceAccountName: server
+      containers:
+      - name: server
+        image: titrate-server:latest
+        imagePullPolicy: Never
+        env:
+        - name: TITRATE_PORT
+          value: 80
+        - name: TITRATE_BODY_SIZE
+          value: 16384 # 16kb response body
+        - name: TITRATE_FRAME_SIZE
+          value: 1024 # 1024-byte frames
+        # limit the pod to a 32Mib footprint.
+        resources:
+          requests:
+            memory: "8Mi"
+          limits:
+            memory: "32Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+        ports:
+        - containerPort: 80
+          name: http
+---
+# server: pods serving response bodies with a 4096-byte chunk size.
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-4096
+  namespace: titrate
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-server
+    frame-size: 4096
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-4096
+  namespace: titrate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: titrate-server
+      body-size: 16kb
+      frame-size: 4096
+  template:
+    metadata:
+      labels:
+        app: titrate-server
+        body-size: 16kb
+        frame-size: 4096
+    spec:
+      serviceAccountName: server
+      containers:
+      - name: server
+        image: titrate-server:latest
+        imagePullPolicy: Never
+        env:
+        - name: TITRATE_PORT
+          value: 80
+        - name: TITRATE_BODY_SIZE
+          value: 16384 # 16kb response body
+        - name: TITRATE_FRAME_SIZE
+          value: 4096 # 4096-byte frames
+        # limit the pod to a 32Mib footprint.
+        resources:
+          requests:
+            memory: "8Mi"
+          limits:
+            memory: "32Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+        ports:
+        - containerPort: 80
+          name: http

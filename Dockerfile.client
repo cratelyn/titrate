@@ -1,0 +1,30 @@
+#
+# # titrate client
+#
+
+# build the binary.
+FROM rust:latest as build
+WORKDIR /src
+COPY . .
+RUN cargo build --bin titrate-client
+
+# copy the binary into the runtime layer.
+FROM debian:bookworm-slim as runtime
+COPY --from=build /src/target/debug/titrate-client /app/titrate-client
+
+# add some various networking utilities to the client pod, for debugging.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    dnsutils \
+    iptables \
+    jq \
+    nghttp2 \
+    tcpdump \
+    iproute2 \
+    lsof \
+    conntrack \
+    tshark && \
+    rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT ["/app/titrate-client"]

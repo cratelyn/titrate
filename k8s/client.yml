@@ -1,0 +1,252 @@
+# a namespace for the load-test.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: titrate
+---
+# client's service account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: client
+  namespace: titrate
+---
+# client: 400rps load for the 16-byte frame server
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+  namespace: titrate
+spec:
+  ports:
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-client
+    frame-size: 16
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-16
+  namespace: titrate
+spec:
+  # 4 clients running at 100rps
+  replicas: 4
+  selector:
+    matchLabels:
+      app: titrate-client
+      body-size: 16kb
+      frame-size: 16
+  template:
+    metadata:
+      labels:
+        app: titrate-client
+        body-size: 16kb
+        frame-size: 16
+    spec:
+      serviceAccountName: client
+      containers:
+      - name: titrate-client
+        image: titrate-client:latest
+        imagePullPolicy: Never
+        # send 100 requests per second; 1000ms / 100rps = 10ms
+        env:
+        - name: TITRATE_SERVER
+          value: http://server-16.titrate:80
+        - name: TITRATE_INTERVAL_MS
+          value: 10
+---
+# client: 400rps load for the 64-byte frame server
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+  namespace: titrate
+spec:
+  ports:
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-client
+    frame-size: 64
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-64
+  namespace: titrate
+spec:
+  # 4 clients running at 100rps
+  replicas: 4
+  selector:
+    matchLabels:
+      app: titrate-client
+      body-size: 16kb
+      frame-size: 64
+  template:
+    metadata:
+      labels:
+        app: titrate-client
+        body-size: 16kb
+        frame-size: 64
+    spec:
+      serviceAccountName: client
+      containers:
+      - name: titrate-client
+        image: titrate-client:latest
+        imagePullPolicy: Never
+        # send 100 requests per second; 1000ms / 100rps = 10ms
+        env:
+        - name: TITRATE_SERVER
+          value: http://server-64.titrate:80
+        - name: TITRATE_INTERVAL_MS
+          value: 10
+---
+# client: 400rps load for the 256-byte frame server
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+  namespace: titrate
+spec:
+  ports:
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-client
+    frame-size: 256
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-256
+  namespace: titrate
+spec:
+  # 4 clients running at 100rps
+  replicas: 4
+  selector:
+    matchLabels:
+      app: titrate-client
+      body-size: 16kb
+      frame-size: 256
+  template:
+    metadata:
+      labels:
+        app: titrate-client
+        body-size: 16kb
+        frame-size: 256
+    spec:
+      serviceAccountName: client
+      containers:
+      - name: titrate-client
+        image: titrate-client:latest
+        imagePullPolicy: Never
+        # send 100 requests per second; 1000ms / 100rps = 10ms
+        env:
+        - name: TITRATE_SERVER
+          value: http://server-256.titrate:80
+        - name: TITRATE_INTERVAL_MS
+          value: 10
+---
+# client: 400rps load for the 1024-byte frame server
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+  namespace: titrate
+spec:
+  ports:
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-client
+    frame-size: 1024
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-1024
+  namespace: titrate
+spec:
+  # 4 clients running at 100rps
+  replicas: 4
+  selector:
+    matchLabels:
+      app: titrate-client
+      body-size: 16kb
+      frame-size: 1024
+  template:
+    metadata:
+      labels:
+        app: titrate-client
+        body-size: 16kb
+        frame-size: 1024
+    spec:
+      serviceAccountName: client
+      containers:
+      - name: titrate-client
+        image: titrate-client:latest
+        imagePullPolicy: Never
+        # send 100 requests per second; 1000ms / 100rps = 10ms
+        env:
+        - name: TITRATE_SERVER
+          value: http://server-1024.titrate:80
+        - name: TITRATE_INTERVAL_MS
+          value: 10
+---
+# client: 400rps load for the 4096-byte frame server
+apiVersion: v1
+kind: Service
+metadata:
+  name: client
+  namespace: titrate
+spec:
+  ports:
+  - name: prom
+    port: 8801
+    targetPort: 8801
+  selector:
+    app: titrate-client
+    frame-size: 4096
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-4096
+  namespace: titrate
+spec:
+  # 4 clients running at 100rps
+  replicas: 4
+  selector:
+    matchLabels:
+      app: titrate-client
+      body-size: 16kb
+      frame-size: 4096
+  template:
+    metadata:
+      labels:
+        app: titrate-client
+        body-size: 16kb
+        frame-size: 4096
+    spec:
+      serviceAccountName: client
+      containers:
+      - name: titrate-client
+        image: titrate-client:latest
+        imagePullPolicy: Never
+        # send 100 requests per second; 1000ms / 100rps = 10ms
+        env:
+        - name: TITRATE_SERVER
+          value: http://server-4096.titrate:80
+        - name: TITRATE_INTERVAL_MS
+          value: 10
